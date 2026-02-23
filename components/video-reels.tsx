@@ -1,12 +1,18 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
-import Image from 'next/image'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Play, X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { fadeUp, staggerContainer, transition, ease } from '@/lib/motion'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
+import { fadeUp, staggerContainer, transition } from '@/lib/motion'
 
-const reels = [
+type Reel = {
+  id: number
+  title: string
+  thumbnail: string
+  video: string
+}
+
+const reels: Reel[] = [
   {
     id: 1,
     title: 'Farm to Table Journey',
@@ -46,143 +52,206 @@ const reels = [
 ]
 
 export function VideoReels() {
-  const [activeVideo, setActiveVideo] = useState<typeof reels[0] | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const desktopAutoScrollRef = useRef<number | null>(null)
+  const [activeReelId, setActiveReelId] = useState<number | null>(null)
+  const [pauseDesktopAutoScroll, setPauseDesktopAutoScroll] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
   const scroll = useCallback((direction: 'left' | 'right') => {
     if (!scrollRef.current) return
-    const amount = 280
+    const amount = 320
     scrollRef.current.scrollBy({
       left: direction === 'left' ? -amount : amount,
-      behavior: 'smooth',
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
     })
-  }, [])
+  }, [prefersReducedMotion])
+
+  useEffect(() => {
+    const section = scrollRef.current
+    if (!section || prefersReducedMotion) return
+
+    const mediaQuery = window.matchMedia('(min-width: 768px)')
+    if (!mediaQuery.matches) return
+
+    let direction = 1
+    const step = () => {
+      if (!scrollRef.current || pauseDesktopAutoScroll) {
+        desktopAutoScrollRef.current = window.requestAnimationFrame(step)
+        return
+      }
+
+      const node = scrollRef.current
+      const maxScrollLeft = node.scrollWidth - node.clientWidth
+      node.scrollLeft += direction * 0.2
+
+      if (node.scrollLeft >= maxScrollLeft - 2) direction = -1
+      if (node.scrollLeft <= 2) direction = 1
+
+      desktopAutoScrollRef.current = window.requestAnimationFrame(step)
+    }
+
+    desktopAutoScrollRef.current = window.requestAnimationFrame(step)
+
+    return () => {
+      if (desktopAutoScrollRef.current) {
+        window.cancelAnimationFrame(desktopAutoScrollRef.current)
+      }
+    }
+  }, [pauseDesktopAutoScroll, prefersReducedMotion])
 
   return (
-    <>
-      <section className="bg-secondary py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-            variants={fadeUp}
-            transition={transition.smooth}
-            className="mb-12 flex items-end justify-between"
-          >
-            <div>
-              <p className="mb-3 text-xs font-semibold tracking-[0.2em] uppercase text-accent">
-                Behind the scenes
-              </p>
-              <h2 className="font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl text-balance">
-                Our Stories
-              </h2>
-            </div>
-            <div className="hidden gap-2 sm:flex">
-              <button
-                onClick={() => scroll('left')}
-                aria-label="Scroll reels left"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/60 transition-colors hover:border-primary hover:text-primary"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => scroll('right')}
-                aria-label="Scroll reels right"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/60 transition-colors hover:border-primary hover:text-primary"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={staggerContainer}
-          >
-            <div
-              ref={scrollRef}
-              className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 scrollbar-none"
-              style={{ scrollbarWidth: 'none' }}
+    <section className="bg-secondary py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={fadeUp}
+          transition={transition.smooth}
+          className="mb-12 flex items-end justify-between"
+        >
+          <div>
+            <p className="mb-3 text-xs font-semibold tracking-[0.2em] uppercase text-accent">
+              Behind the scenes
+            </p>
+            <h2 className="font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl text-balance">
+              Our Stories
+            </h2>
+          </div>
+          <div className="hidden gap-2 md:flex">
+            <button
+              onClick={() => scroll('left')}
+              aria-label="Scroll reels left"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/60 transition-colors hover:border-primary hover:text-primary"
             >
-              {reels.map((reel) => (
-                <motion.button
-                  key={reel.id}
-                  variants={fadeUp}
-                  transition={transition.smooth}
-                  whileHover={prefersReducedMotion ? {} : { y: -6 }}
-                  onClick={() => setActiveVideo(reel)}
-                  className="group relative flex-shrink-0 snap-start overflow-hidden rounded-xl"
-                  style={{ width: 240, height: 380 }}
-                >
-                  <Image
-                    src={reel.thumbnail}
-                    alt={reel.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="240px"
-                  />
-                  <div className="absolute inset-0 bg-foreground/20 transition-colors duration-300 group-hover:bg-foreground/40" />
-                  {/* Play button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-foreground/90 text-primary shadow-lg transition-transform duration-300 group-hover:scale-110">
-                      <Play className="ml-0.5 h-6 w-6" fill="currentColor" />
-                    </div>
-                  </div>
-                  {/* Title */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-left text-sm font-semibold text-primary-foreground">
-                      {reel.title}
-                    </p>
-                  </div>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Video modal */}
-      <AnimatePresence>
-        {activeVideo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/80 backdrop-blur-sm p-4"
-            onClick={() => setActiveVideo(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ duration: 0.3, ease: ease.out }}
-              className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-foreground shadow-2xl"
-              style={{ aspectRatio: '9/16' }}
-              onClick={(e) => e.stopPropagation()}
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              aria-label="Scroll reels right"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/60 transition-colors hover:border-primary hover:text-primary"
             >
-              <video
-                src={activeVideo.video}
-                autoPlay
-                loop
-                playsInline
-                className="h-full w-full object-cover"
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={staggerContainer}
+        >
+          <div
+            ref={scrollRef}
+            onMouseEnter={() => setPauseDesktopAutoScroll(true)}
+            onMouseLeave={() => setPauseDesktopAutoScroll(false)}
+            onTouchStart={() => setPauseDesktopAutoScroll(true)}
+            onTouchEnd={() => setPauseDesktopAutoScroll(false)}
+            className="-mx-4 flex h-[84svh] snap-y snap-mandatory flex-col gap-4 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-1 scrollbar-none md:h-auto md:snap-x md:snap-mandatory md:flex-row md:overflow-x-auto md:overflow-y-visible"
+            style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+          >
+            {reels.map((reel) => (
+              <ReelCard
+                key={reel.id}
+                reel={reel}
+                active={activeReelId === reel.id}
+                setActiveReelId={setActiveReelId}
+                prefersReducedMotion={Boolean(prefersReducedMotion)}
               />
-              <button
-                onClick={() => setActiveVideo(null)}
-                aria-label="Close video"
-                className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-foreground/50 text-primary-foreground backdrop-blur-sm transition-colors hover:bg-foreground/70"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+type ReelCardProps = {
+  reel: Reel
+  active: boolean
+  setActiveReelId: (id: number | null) => void
+  prefersReducedMotion: boolean
+}
+
+function ReelCard({ reel, active, setActiveReelId, prefersReducedMotion }: ReelCardProps) {
+  const cardRef = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const card = cardRef.current
+    const video = videoRef.current
+    if (!card || !video) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const inView = entry.isIntersecting && entry.intersectionRatio > 0.6
+
+        if (inView) {
+          setActiveReelId(reel.id)
+          if (!prefersReducedMotion) {
+            video.play().catch(() => {
+              // Ignore autoplay rejections from strict browser policies.
+            })
+          }
+        } else {
+          if (!video.paused) video.pause()
+        }
+      },
+      {
+        threshold: [0.25, 0.6, 0.8],
+      }
+    )
+
+    observer.observe(card)
+
+    return () => {
+      observer.disconnect()
+      video.pause()
+    }
+  }, [prefersReducedMotion, reel.id, setActiveReelId])
+
+  return (
+    <motion.article
+      ref={cardRef}
+      variants={fadeUp}
+      transition={transition.smooth}
+      whileHover={prefersReducedMotion ? {} : { y: -6 }}
+      className="group relative min-h-[78svh] w-full flex-shrink-0 snap-start overflow-hidden rounded-2xl bg-foreground shadow-lg md:min-h-0 md:w-[240px] md:rounded-xl"
+      style={{
+        aspectRatio: '9 / 16',
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={reel.video}
+        poster={reel.thumbnail}
+        muted
+        loop
+        playsInline
+        preload="none"
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/35 bg-black/25 text-white backdrop-blur-sm transition-all duration-300 group-hover:scale-110">
+          <Play className="ml-0.5 h-6 w-6" fill="currentColor" />
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 p-5">
+        <p className="text-left text-sm font-semibold text-primary-foreground md:text-base">
+          {reel.title}
+        </p>
+      </div>
+
+      <div
+        className={`pointer-events-none absolute inset-0 border border-white/20 transition-all duration-500 ${
+          active ? 'scale-[1.01] shadow-[0_0_0_1px_rgba(255,255,255,0.3)]' : 'scale-100'
+        }`}
+      />
+    </motion.article>
   )
 }
