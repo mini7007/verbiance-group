@@ -149,7 +149,7 @@ export function VideoReels() {
             onMouseLeave={() => setPauseDesktopAutoScroll(false)}
             onTouchStart={() => setPauseDesktopAutoScroll(true)}
             onTouchEnd={() => setPauseDesktopAutoScroll(false)}
-            className="-mx-4 flex h-[84svh] snap-y snap-mandatory flex-col gap-4 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-1 scrollbar-none md:h-auto md:snap-x md:snap-mandatory md:flex-row md:overflow-x-auto md:overflow-y-visible"
+            className="flex h-[84svh] max-w-full snap-y snap-mandatory flex-col gap-4 overflow-y-auto overflow-x-hidden pb-4 pt-1 scrollbar-none md:h-auto md:snap-x md:snap-mandatory md:flex-row md:overflow-x-auto md:overflow-y-visible"
             style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
           >
             {reels.map((reel) => (
