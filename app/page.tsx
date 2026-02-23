@@ -13,14 +13,15 @@ import { PartnerLogos } from '@/components/partner-logos'
 import { BlogPreview } from '@/components/blog-preview'
 import { SiteFooter } from '@/components/site-footer'
 import { CartDrawer } from '@/components/cart-drawer'
-import TrustBadges from "@/components/ui/trust-badges"
+import TrustBadges from '@/components/ui/trust-badges'
+import { PageTransition } from '@/components/page-transition'
 
 export default function Home() {
   return (
-    <>
+    <PageTransition>
       <AnnouncementBar />
       <Navbar />
-      <main>
+      <main className="space-y-0">
         <HeroSection />
         <TrustBadges />
         <CategoryCollection />
@@ -34,6 +35,6 @@ export default function Home() {
       </main>
       <SiteFooter />
       <CartDrawer />
-    </>
+    </PageTransition>
   )
 }

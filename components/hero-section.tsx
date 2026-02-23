@@ -5,6 +5,13 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ease } from '@/lib/motion'
 
+const heroCopy = {
+  eyebrow: 'Handcrafted with love',
+  title: "Nature's Finest, Delivered to Your Door",
+  description:
+    'Discover our curated collection of premium organic wellness products sourced directly from the pristine valleys of India.',
+}
+
 export function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoLoaded, setVideoLoaded] = useState(false)
@@ -12,25 +19,21 @@ export function HeroSection() {
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || prefersReducedMotion) return
 
     const handleCanPlay = () => setVideoLoaded(true)
-    video.addEventListener('canplaythrough', handleCanPlay)
+    video.addEventListener('loadeddata', handleCanPlay, { once: true })
 
-    // Attempt to play (might fail on some mobile browsers)
     video.play().catch(() => {
-      // Video autoplay blocked — fallback image will show
+      // Video autoplay blocked — fallback image remains visible
     })
 
-    return () => video.removeEventListener('canplaythrough', handleCanPlay)
-  }, [])
+    return () => video.removeEventListener('loadeddata', handleCanPlay)
+  }, [prefersReducedMotion])
 
   return (
-    <section id="home" className="relative min-h-[90vh] overflow-hidden lg:min-h-screen">
-      {/* Fallback Image (shown until video loads) */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-1000 ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}
-      >
+    <section id="home" className="relative min-h-[88vh] overflow-hidden lg:min-h-screen">
+      <div className={`absolute inset-0 transition-opacity duration-700 ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}>
         <Image
           src="/images/hero.jpg"
           alt="Organic wellness products"
@@ -41,73 +44,80 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Background Video */}
-      <motion.div
-        initial={{ scale: 1.08 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 8, ease: ease.out }}
-        className="absolute inset-0"
-      >
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className={`h-full w-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
-          aria-hidden="true"
+      {!prefersReducedMotion && (
+        <motion.div
+          initial={{ scale: 1.04 }}
+          animate={{ scale: 1.1 }}
+          transition={{ duration: 16, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
+          className="absolute inset-0"
         >
-          <source src="/videos/hero.mp4" type="video/mp4" />
-        </video>
-      </motion.div>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="/images/hero.jpg"
+            className={`h-full w-full object-cover transition-opacity duration-700 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+            aria-hidden="true"
+          >
+            <source src="/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </motion.div>
+      )}
 
-      {/* Dark gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/50 to-foreground/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/55" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
 
-      {/* Content */}
-      <div className="relative mx-auto flex min-h-[90vh] max-w-7xl items-center px-4 py-24 lg:min-h-screen lg:px-8">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: {
+            transition: prefersReducedMotion
+              ? undefined
+              : { delayChildren: 0.2, staggerChildren: 0.14 },
+          },
+        }}
+        className="relative mx-auto flex min-h-[88vh] max-w-7xl items-center px-4 py-20 sm:px-6 lg:min-h-screen lg:px-8"
+      >
         <div className="max-w-2xl">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: ease.out }}
-            className="mb-4 text-sm font-semibold tracking-[0.25em] uppercase text-accent"
+            variants={{ hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.55, ease: ease.out }}
+            className="mb-3 text-xs font-semibold tracking-[0.24em] uppercase text-accent sm:mb-5 sm:text-sm"
           >
-            Handcrafted with love
+            {heroCopy.eyebrow}
           </motion.p>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: ease.out }}
-            className="mb-6 font-serif text-4xl font-bold leading-tight tracking-tight text-primary-foreground text-balance sm:text-5xl lg:text-6xl xl:text-7xl"
+            variants={{ hidden: { opacity: 0, y: 22 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.65, ease: ease.out }}
+            className="mb-5 font-serif text-4xl leading-[1.1] font-bold tracking-tight text-primary-foreground text-balance sm:text-5xl lg:text-6xl xl:text-7xl"
           >
-            {"Nature's Finest, Delivered to Your Door"}
+            {heroCopy.title}
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7, ease: ease.out }}
-            className="mb-10 max-w-lg text-base leading-relaxed text-primary-foreground/70 sm:text-lg"
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.65, ease: ease.out }}
+            className="mb-9 max-w-xl text-base leading-relaxed text-primary-foreground/85 sm:text-lg"
           >
-            Discover our curated collection of premium organic wellness products
-            sourced directly from the pristine valleys of India.
+            {heroCopy.description}
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9, ease: ease.out }}
-            className="flex flex-wrap gap-4"
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.65, ease: ease.out }}
+            className="flex flex-wrap gap-3 sm:gap-4"
           >
             <motion.a
               href="#shop"
-              whileHover={prefersReducedMotion ? {} : { scale: 1.03 }}
-              whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
-              className="group inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold tracking-wide text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30"
+              whileHover={prefersReducedMotion ? {} : { y: -2 }}
+              whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
+              className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold tracking-wide text-primary-foreground shadow-[0_10px_30px_-12px_rgba(45,90,61,0.75)] transition-all duration-300 hover:bg-primary/90 hover:shadow-[0_16px_35px_-14px_rgba(45,90,61,0.8)] sm:px-8"
             >
               Shop Collection
               <svg
@@ -117,39 +127,19 @@ export function HeroSection() {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </motion.a>
             <motion.a
               href="#about"
-              whileHover={prefersReducedMotion ? {} : { scale: 1.03 }}
-              whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
-              className="inline-flex items-center rounded-full border-2 border-primary-foreground/30 px-8 py-3.5 text-sm font-semibold tracking-wide text-primary-foreground transition-all duration-300 hover:border-primary-foreground/60 hover:bg-primary-foreground/10"
+              whileHover={prefersReducedMotion ? {} : { y: -2 }}
+              whileTap={prefersReducedMotion ? {} : { scale: 0.98 }}
+              className="inline-flex min-h-12 items-center rounded-full border border-primary-foreground/40 bg-white/5 px-7 py-3 text-sm font-semibold tracking-wide text-primary-foreground backdrop-blur-xs transition-all duration-300 hover:border-primary-foreground/80 hover:bg-white/12 sm:px-8"
             >
               Our Story
             </motion.a>
           </motion.div>
         </div>
-      </div>
-
-      {/* Bottom scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={prefersReducedMotion ? {} : { y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-          className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-primary-foreground/30 pt-2"
-        >
-          <div className="h-1.5 w-1.5 rounded-full bg-primary-foreground/60" />
-        </motion.div>
       </motion.div>
     </section>
   )
