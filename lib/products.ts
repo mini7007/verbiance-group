@@ -18,7 +18,7 @@ export const products: Product[] = [
     image: '/images/product-1.jpg',
     category: 'Skincare',
     description: 'A luxurious blend of organic oils for glowing, youthful skin.',
-    badge: 'Bestseller',
+    badge: 'Best Seller',
   },
   {
     id: 2,
@@ -54,7 +54,7 @@ export const products: Product[] = [
     image: '/images/product-5.jpg',
     category: 'Skincare',
     description: 'Deep nourishing body butter with organic shea and cocoa.',
-    badge: 'Popular',
+    badge: 'Best Seller',
   },
   {
     id: 6,

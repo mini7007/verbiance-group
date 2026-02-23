@@ -7,15 +7,15 @@ import { fadeUp, staggerContainer, transition } from '@/lib/motion'
 
 export function FeaturedProducts() {
   return (
-    <section id="shop" className="bg-background py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+    <section id="shop" className="bg-background py-16 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           transition={transition.smooth}
-          className="mb-14 text-center"
+          className="mb-12 text-center sm:mb-14"
         >
           <p className="mb-3 text-sm font-semibold tracking-[0.2em] uppercase text-primary">
             Our Collection
@@ -34,7 +34,7 @@ export function FeaturedProducts() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-80px' }}
-          className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
         >
           {products.map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
