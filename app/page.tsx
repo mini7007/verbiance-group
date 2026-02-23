@@ -15,6 +15,7 @@ import { SiteFooter } from '@/components/site-footer'
 import { CartDrawer } from '@/components/cart-drawer'
 import TrustBadges from '@/components/ui/trust-badges'
 import { PageTransition } from '@/components/page-transition'
+import { NewsletterPopup } from '@/components/newsletter-popup'
 
 export default function Home() {
   return (
@@ -35,6 +36,7 @@ export default function Home() {
       </main>
       <SiteFooter />
       <CartDrawer />
+      <NewsletterPopup />
     </PageTransition>
   )
 }
