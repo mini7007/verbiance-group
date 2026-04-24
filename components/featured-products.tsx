@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { type Product, products as fallbackProducts } from '@/lib/products'
+import { type Product } from '@/lib/products'
 import { ProductCard } from './product-card'
 import { fadeUp, staggerContainer, transition } from '@/lib/motion'
 
@@ -19,7 +19,7 @@ const sectionDefaults = {
 }
 
 export function FeaturedProducts({ eyebrow, title, description, products }: FeaturedProductsProps) {
-  const featuredProducts = products?.length ? products : fallbackProducts
+  const featuredProducts = products ?? []
 
   return (
     <section id="shop" className="bg-background py-16 sm:py-20 lg:py-28">

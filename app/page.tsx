@@ -14,7 +14,7 @@ import { CartDrawer } from '@/components/cart-drawer'
 import TrustBadges from '@/components/ui/trust-badges'
 import { PageTransition } from '@/components/page-transition'
 import { type Product, products } from '@/lib/products'
-import { fetchHomepage, type SanityProduct } from '@/lib/sanity/fetch'
+import { fetchFeaturedProducts, fetchHomepage, type SanityProduct } from '@/lib/sanity/fetch'
 
 const fallbackHero = {
   eyebrow: 'Handcrafted with love',
@@ -52,7 +52,7 @@ const mapSanityProductsToUiProducts = (items: SanityProduct[]): Product[] => {
 }
 
 export default async function Home() {
-  const homepage = await fetchHomepage()
+  const [homepage, featuredFromCms] = await Promise.all([fetchHomepage(), fetchFeaturedProducts(6)])
 
   const heroContent = {
     eyebrow: fallbackHero.eyebrow,
@@ -61,8 +61,9 @@ export default async function Home() {
     imageUrl: homepage?.heroImageUrl || fallbackHero.imageUrl,
   }
 
-  const featuredProducts =
-    homepage?.featuredProducts?.length
+  const featuredProducts = featuredFromCms.length
+    ? mapSanityProductsToUiProducts(featuredFromCms)
+    : homepage?.featuredProducts?.length
       ? mapSanityProductsToUiProducts(homepage.featuredProducts)
       : products
 
