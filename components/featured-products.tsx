@@ -1,11 +1,26 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { products } from '@/lib/products'
+import { type Product, products as fallbackProducts } from '@/lib/products'
 import { ProductCard } from './product-card'
 import { fadeUp, staggerContainer, transition } from '@/lib/motion'
 
-export function FeaturedProducts() {
+type FeaturedProductsProps = {
+  eyebrow?: string
+  title?: string
+  description?: string
+  products?: Product[]
+}
+
+const sectionDefaults = {
+  eyebrow: 'Our Collection',
+  title: 'Handpicked for Your Wellness',
+  description: 'Each product is carefully sourced and crafted to bring you the purest nature has to offer.',
+}
+
+export function FeaturedProducts({ eyebrow, title, description, products }: FeaturedProductsProps) {
+  const featuredProducts = products?.length ? products : fallbackProducts
+
   return (
     <section id="shop" className="bg-background py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -18,14 +33,13 @@ export function FeaturedProducts() {
           className="mb-12 text-center sm:mb-14"
         >
           <p className="mb-3 text-sm font-semibold tracking-[0.2em] uppercase text-primary">
-            Our Collection
+            {eyebrow || sectionDefaults.eyebrow}
           </p>
           <h2 className="mx-auto max-w-xl font-serif text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            Handpicked for Your Wellness
+            {title || sectionDefaults.title}
           </h2>
           <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
-            Each product is carefully sourced and crafted to bring you the purest
-            nature has to offer.
+            {description || sectionDefaults.description}
           </p>
         </motion.div>
 
@@ -36,7 +50,7 @@ export function FeaturedProducts() {
           viewport={{ once: true, margin: '-80px' }}
           className="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
         >
-          {products.map((product, i) => (
+          {featuredProducts.map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
           ))}
         </motion.div>
