@@ -25,6 +25,14 @@ const homepageProjection = `{
 const allProductsQuery = groq`*[_type == "product" && defined(image.asset)] | order(_createdAt desc) ${productCardProjection}`
 const featuredProductsQuery = groq`*[_type == "product" && featured == true && defined(image.asset)] | order(_updatedAt desc) [0...$limit] ${productCardProjection}`
 const homepageDataQuery = groq`*[_type == "homepage"][0] ${homepageProjection}`
+const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
+  _id,
+  "siteName": coalesce(siteName, "Valley Culture"),
+  "announcementText": coalesce(announcementText, ""),
+  supportEmail,
+  "logoUrl": logo.asset->url,
+  socialLinks
+}`
 
 export const getAllProducts = () => {
   return sanityClient.fetch(allProductsQuery)
@@ -36,4 +44,8 @@ export const getFeaturedProducts = (limit = 6) => {
 
 export const getHomepageData = () => {
   return sanityClient.fetch(homepageDataQuery)
+}
+
+export const getSiteSettings = () => {
+  return sanityClient.fetch(siteSettingsQuery)
 }
