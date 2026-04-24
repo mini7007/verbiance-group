@@ -42,9 +42,12 @@ const mapSanityProductsToUiProducts = (items: SanityProduct[]): Product[] => {
     .map((item, index) => ({
       id: toStableNumericId(item._id, index + 1),
       name: item.name,
+      slug: item.slug,
       price: item.price,
       originalPrice: item.originalPrice,
       image: item.imageUrl ?? '/images/product-1.jpg',
+      images: item.images?.length ? item.images : item.imageUrl ? [item.imageUrl] : ['/images/product-1.jpg'],
+      videoUrl: item.videoUrl,
       category: item.category ?? 'Wellness',
       description: item.description ?? 'Premium wellness product from our curated collection.',
       badge: item.badge,

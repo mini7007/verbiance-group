@@ -14,6 +14,8 @@ export type SanityProduct = {
   description?: string
   badge?: string
   imageUrl?: string
+  images?: string[]
+  videoUrl?: string
 }
 
 export type HomepageData = {
@@ -33,7 +35,9 @@ const productProjection = `{
   category,
   description,
   badge,
-  "imageUrl": image.asset->url
+  "imageUrl": image.asset->url,
+  "images": coalesce(gallery[].asset->url, [image.asset->url]),
+  "videoUrl": coalesce(video.asset->url, videoUrl)
 }`
 
 const allProductsQuery = groq`*[_type == "product" && defined(image.asset)] | order(_createdAt desc) ${productProjection}`
@@ -45,6 +49,7 @@ const homepageQuery = groq`*[_type == "homepage"][0]{
   "heroImageUrl": heroImage.asset->url,
   "featuredProducts": featuredProducts[]->${productProjection}
 }`
+const productBySlugQuery = groq`*[_type == "product" && slug.current == $slug][0] ${productProjection}`
 
 export async function fetchAllProducts(): Promise<SanityProduct[]> {
   try {
@@ -77,6 +82,16 @@ export async function fetchHomepage(): Promise<HomepageData | null> {
     return homepage ?? null
   } catch (error) {
     console.error('Failed to fetch homepage data from Sanity:', error)
+    return null
+  }
+}
+
+export async function fetchProductBySlug(slug: string): Promise<SanityProduct | null> {
+  try {
+    const product = await sanityClient.fetch<SanityProduct | null>(productBySlugQuery, { slug })
+    return product ?? null
+  } catch (error) {
+    console.error(`Failed to fetch product with slug "${slug}" from Sanity:`, error)
     return null
   }
 }

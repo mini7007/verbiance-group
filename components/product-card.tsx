@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ShoppingBag } from 'lucide-react'
 import { toast } from 'sonner'
@@ -46,7 +47,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           </span>
         )}
 
-        <div className="relative aspect-square overflow-hidden">
+        <Link href={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden" aria-label={`View details for ${product.name}`}>
           <Image
             src={product.image}
             alt={product.name}
@@ -54,7 +55,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           />
-        </div>
+        </Link>
 
         <motion.button
           onClick={handleAddToCart}
@@ -73,7 +74,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           {product.category}
         </p>
         <h3 className="font-serif text-xl leading-snug font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
-          {product.name}
+          <Link href={`/product/${product.slug}`}>{product.name}</Link>
         </h3>
         <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">{product.description}</p>
         <div className="flex items-baseline gap-2 pt-0.5">
