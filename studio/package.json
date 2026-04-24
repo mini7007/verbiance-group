@@ -1,0 +1,18 @@
+{
+  "name": "valley-culture-studio",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "start": "sanity start"
+  },
+  "dependencies": {
+    "sanity": "^4.13.0",
+    "@sanity/vision": "^4.13.0",
+    "styled-components": "^6.1.15",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}
