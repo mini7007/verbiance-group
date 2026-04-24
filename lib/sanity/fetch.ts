@@ -4,7 +4,7 @@ import { groq } from 'next-sanity'
 
 import { sanityClient } from './client'
 
-type SanityProduct = {
+export type SanityProduct = {
   _id: string
   name: string
   slug: string
@@ -16,7 +16,7 @@ type SanityProduct = {
   imageUrl?: string
 }
 
-type HomepageData = {
+export type HomepageData = {
   _id: string
   title: string
   subtitle: string

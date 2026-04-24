@@ -5,17 +5,31 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ease } from '@/lib/motion'
 
-const heroCopy = {
+type HeroSectionProps = {
+  eyebrow?: string
+  title?: string
+  description?: string
+  imageUrl?: string
+}
+
+const heroDefaults = {
   eyebrow: 'Handcrafted with love',
   title: "Nature's Finest, Delivered to Your Door",
   description:
     'Discover our curated collection of premium organic wellness products sourced directly from the pristine valleys of India.',
+  imageUrl: '/images/hero.jpg',
 }
 
-export function HeroSection() {
+export function HeroSection({ eyebrow, title, description, imageUrl }: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const prefersReducedMotion = useReducedMotion()
+  const heroCopy = {
+    eyebrow: eyebrow || heroDefaults.eyebrow,
+    title: title || heroDefaults.title,
+    description: description || heroDefaults.description,
+    imageUrl: imageUrl || heroDefaults.imageUrl,
+  }
 
   useEffect(() => {
     const video = videoRef.current
@@ -35,7 +49,7 @@ export function HeroSection() {
     <section id="home" className="relative min-h-[88vh] overflow-hidden lg:min-h-screen">
       <div className={`absolute inset-0 transition-opacity duration-700 ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}>
         <Image
-          src="/images/hero.jpg"
+          src={heroCopy.imageUrl}
           alt="Organic wellness products"
           fill
           className="object-cover"
@@ -58,7 +72,7 @@ export function HeroSection() {
             loop
             playsInline
             preload="metadata"
-            poster="/images/hero.jpg"
+            poster={heroCopy.imageUrl}
             className={`h-full w-full object-cover transition-opacity duration-700 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden="true"
           >
