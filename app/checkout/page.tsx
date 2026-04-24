@@ -3,15 +3,15 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, ShoppingBag } from 'lucide-react'
 import { toast } from 'sonner'
 import { useCartStore } from '@/lib/cart-store'
 import { formatPrice } from '@/lib/products'
 
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999'
+
 export default function CheckoutPage() {
-  const router = useRouter()
   const { items, totalPrice, clearCart } = useCartStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -19,7 +19,6 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({
     fullName: '',
     phone: '',
-    email: '',
     address: '',
     notes: '',
   })
@@ -30,17 +29,45 @@ export default function CheckoutPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate order processing
-    await new Promise((r) => setTimeout(r, 1500))
+    const orderTotal = totalPrice()
+    const productLines = items
+      .map(
+        (item, index) =>
+          `${index + 1}. ${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}`
+      )
+      .join('\n')
 
-    setIsSubmitting(false)
+    const message = [
+      '🛍️ *New Order Request*',
+      '',
+      '*Products:*',
+      productLines,
+      '',
+      `*Total:* ${formatPrice(orderTotal)}`,
+      '',
+      '*Customer Details:*',
+      `Name: ${form.fullName}`,
+      `Phone: ${form.phone}`,
+      `Address: ${form.address}`,
+      form.notes ? `Notes: ${form.notes}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    const encodedMessage = encodeURIComponent(message)
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`
+
     setIsSuccess(true)
-    clearCart()
-    toast.success('Order placed successfully!')
+    toast.success('Redirecting to WhatsApp...')
+
+    setTimeout(() => {
+      clearCart()
+      window.location.href = whatsappUrl
+    }, 1400)
   }
 
   if (isSuccess) {
@@ -50,8 +77,33 @@ export default function CheckoutPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="max-w-md text-center"
+          className="relative max-w-md overflow-hidden rounded-2xl border border-border bg-card p-8 text-center shadow-sm"
         >
+          <motion.div
+            className="pointer-events-none absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {[...Array(7)].map((_, i) => (
+              <motion.span
+                // eslint-disable-next-line react/no-array-index-key
+                key={i}
+                className="absolute h-2.5 w-2.5 rounded-full bg-primary/40"
+                style={{ left: `${15 + i * 11}%`, top: `${20 + (i % 2) * 35}%` }}
+                initial={{ scale: 0, y: 10, opacity: 0 }}
+                animate={{
+                  scale: [0, 1, 0.7],
+                  y: [10, -14, -4],
+                  opacity: [0, 1, 0],
+                }}
+                transition={{
+                  duration: 1,
+                  delay: 0.2 + i * 0.08,
+                  ease: 'easeOut',
+                }}
+              />
+            ))}
+          </motion.div>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -64,8 +116,8 @@ export default function CheckoutPage() {
             Order Confirmed!
           </h1>
           <p className="mb-8 text-muted-foreground">
-            Thank you for your order. We will process it shortly and send you a
-            confirmation email. Your journey to natural wellness begins now.
+            Order details are ready. Opening WhatsApp so you can send your order
+            in one tap.
           </p>
           <Link
             href="/"
@@ -170,25 +222,6 @@ export default function CheckoutPage() {
                     required
                     className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="+91 XXXXX XXXXX"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-1.5 block text-sm font-medium text-foreground"
-                  >
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="you@example.com"
                   />
                 </div>
 
