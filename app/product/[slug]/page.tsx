@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   if (!product) {
     return {
-      title: 'Product Not Found | Valley Culture',
+      title: 'Product Not Found | Verbiance Group',
       description: 'The requested product could not be found.',
       robots: {
         index: false,
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   return {
-    title: `${product.name} | Valley Culture`,
+    title: `${product.name} | Verbiance Group`,
     description: product.description,
     openGraph: {
       title: product.name,

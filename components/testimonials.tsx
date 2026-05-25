@@ -17,7 +17,7 @@ const testimonials = [
     name: 'Arjun Patel',
     location: 'Bangalore',
     rating: 5,
-    text: "Valley Culture's honey is the purest I've ever tasted. You can genuinely tell the difference from mass-produced brands. My family is hooked.",
+    text: "Verbiance Group's honey is the purest I've ever tasted. You can genuinely tell the difference from mass-produced brands. My family is hooked.",
   },
   {
     id: 3,

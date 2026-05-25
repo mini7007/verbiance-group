@@ -71,7 +71,7 @@ export function BrandStory() {
             </h2>
             <div className="space-y-5 text-base leading-relaxed text-muted-foreground">
               <p>
-                Valley Culture was born from a simple belief: that the finest
+                Verbiance Group was born from a simple belief: that the finest
                 wellness products come from the purest sources. Deep in the lush
                 valleys of India, where ancient traditions meet modern science, we
                 source every ingredient with intention.

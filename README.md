@@ -1,6 +1,6 @@
-# 🌿 Valley Culture — D2C E-Commerce Platform
+# 🌿 Verbiance Group — D2C E-Commerce Platform
 
-A premium, high-performance D2C e-commerce platform inspired by Valley Culture India.
+A premium, high-performance D2C e-commerce platform inspired by Verbiance Group India.
 Built with modern web technologies focusing on **speed, scalability, and conversion-focused UX**.
 
 🔗 Live Preview: *Coming Soon*

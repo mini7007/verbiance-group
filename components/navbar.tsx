@@ -101,7 +101,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
         <Link href="/" className="flex-shrink-0">
-          <span className="font-serif text-xl font-bold tracking-tight text-primary sm:text-2xl">Valley Culture</span>
+          <span className="font-serif text-xl font-bold tracking-tight text-primary sm:text-2xl">Verbiance Group</span>
         </Link>
 
         <ul className="hidden items-center gap-1 md:flex">

@@ -54,7 +54,7 @@ export function SiteFooter() {
           {/* Brand */}
           <motion.div variants={fadeUp} transition={transition.smooth} className="lg:col-span-2">
             <Link href="/" className="inline-block">
-              <span className="font-serif text-2xl font-bold">Valley Culture</span>
+              <span className="font-serif text-2xl font-bold">Verbiance Group</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-primary-foreground/60">
               Handcrafted organic wellness products sourced from the pristine
@@ -166,7 +166,7 @@ export function SiteFooter() {
           className="mt-12 border-t border-primary-foreground/10 pt-8"
         >
           <p className="text-center text-xs text-primary-foreground/40">
-            {'2026 Valley Culture. All rights reserved. Crafted with care in India.'}
+            {'2026 Verbiance Group. All rights reserved. Crafted with care in India.'}
           </p>
         </motion.div>
       </div>

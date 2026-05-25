@@ -27,7 +27,7 @@ const featuredProductsQuery = groq`*[_type == "product" && featured == true && d
 const homepageDataQuery = groq`*[_type == "homepage"][0] ${homepageProjection}`
 const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   _id,
-  "siteName": coalesce(siteName, "Valley Culture"),
+  "siteName": coalesce(siteName, "Verbiance Group"),
   "announcementText": coalesce(announcementText, ""),
   supportEmail,
   "logoUrl": logo.asset->url,

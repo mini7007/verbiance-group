@@ -9,7 +9,7 @@ export const siteSettingsType = defineType({
       name: 'siteName',
       title: 'Site Name',
       type: 'string',
-      initialValue: 'Valley Culture',
+      initialValue: 'Verbiance Group',
       validation: (rule) => rule.required(),
     }),
     defineField({

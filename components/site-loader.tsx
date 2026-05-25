@@ -59,7 +59,7 @@ export function SiteLoader() {
                 className="absolute inset-x-0 top-1/2 h-10 -translate-y-1/2 rounded-full bg-[#d8c4a7]/35 blur-2xl"
               />
             ) : null}
-            <p className="relative font-serif text-4xl tracking-[0.12em] text-[#2d5a3d] sm:text-5xl">Valley Culture</p>
+            <p className="relative font-serif text-4xl tracking-[0.12em] text-[#2d5a3d] sm:text-5xl">Verbiance Group</p>
           </motion.div>
         </motion.div>
       )}

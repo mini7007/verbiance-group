@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Valley Culture | Premium Organic Wellness',
+  title: 'Verbiance Group | Premium Organic Wellness',
   description: 'Discover handcrafted organic wellness products sourced from the heart of nature. Premium quality, sustainably harvested.',
   icons: {
     icon: [
