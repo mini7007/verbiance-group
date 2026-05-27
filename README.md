@@ -23,7 +23,7 @@ Built with modern web technologies focusing on **speed, scalability, and convers
 
 ---
 
-## 🏗️ Tech Stack
+## 🏗️ Tech Stacks
 
 **Frontend**
 
