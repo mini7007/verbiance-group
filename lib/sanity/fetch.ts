@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { groq } from 'next-sanity'
+import { groq } from 'groq'
 
 import { sanityClient } from './client'
 
