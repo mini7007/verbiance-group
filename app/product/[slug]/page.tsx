@@ -6,43 +6,18 @@ import { SiteFooter } from '@/components/site-footer'
 import { CartDrawer } from '@/components/cart-drawer'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice, products, type Product } from '@/lib/products'
-import { fetchProductBySlug, type SanityProduct } from '@/lib/sanity/fetch'
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>
 }
 
-const buildLocalFallbackProduct = (slug: string): Product | null => {
+const resolveProduct = (slug: string): Product | null => {
   return products.find((product) => product.slug === slug) ?? null
-}
-
-const mapSanityProductToUi = (item: SanityProduct): Product => ({
-  id: Number.parseInt(item._id.replace(/\D/g, '').slice(0, 8), 10) || 1,
-  name: item.name,
-  slug: item.slug,
-  price: item.price,
-  originalPrice: item.originalPrice,
-  image: item.imageUrl ?? '/images/product-1.jpg',
-  images: item.images?.length ? item.images : item.imageUrl ? [item.imageUrl] : ['/images/product-1.jpg'],
-  videoUrl: item.videoUrl,
-  category: item.category ?? 'Wellness',
-  description: item.description ?? 'Premium wellness product from our curated collection.',
-  badge: item.badge,
-})
-
-const resolveProduct = async (slug: string): Promise<Product | null> => {
-  const sanityProduct = await fetchProductBySlug(slug)
-
-  if (sanityProduct) {
-    return mapSanityProductToUi(sanityProduct)
-  }
-
-  return buildLocalFallbackProduct(slug)
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const product = await resolveProduct(slug)
+  const product = resolveProduct(slug)
 
   if (!product) {
     return {
@@ -75,7 +50,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const product = await resolveProduct(slug)
+  const product = resolveProduct(slug)
 
   if (!product) {
     notFound()
